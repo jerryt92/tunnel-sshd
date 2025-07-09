@@ -83,10 +83,14 @@ public class SshdServer {
                 signatureFactories.add(BuiltinSignatures.ed25519);
                 signatureFactories.add(BuiltinSignatures.ed25519_cert);
                 sshdInstance.setSignatureFactories(signatureFactories);
-                // 设置密码验证
-                sshdInstance.setPasswordAuthenticator(passwordAuthenticator);
-                // 设置公钥验证
-                sshdInstance.setPublickeyAuthenticator(publickeyAuthenticator);
+                if (sshdConfig.allowPassword) {
+                    // 设置密码验证
+                    sshdInstance.setPasswordAuthenticator(passwordAuthenticator);
+                }
+                if (sshdConfig.allowPublicKey) {
+                    // 设置公钥验证
+                    sshdInstance.setPublickeyAuthenticator(publickeyAuthenticator);
+                }
                 // 设置shell
 //                sshdInstance.setShellFactory(new ProcessShellFactory("/bin/sh", "-i"));
                 // 设置端口转发

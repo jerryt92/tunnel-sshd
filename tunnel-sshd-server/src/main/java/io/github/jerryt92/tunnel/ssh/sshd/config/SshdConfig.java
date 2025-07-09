@@ -19,6 +19,8 @@ public class SshdConfig {
     public boolean allowClientLocalForward;
     @Value("${tunnel.sshd.allow-password}")
     public boolean allowPassword;
+    @Value("${tunnel.sshd.allow-public-key}")
+    public boolean allowPublicKey;
     @Value("${tunnel.sshd.username}")
     public String username;
     @Value("${tunnel.sshd.password}")

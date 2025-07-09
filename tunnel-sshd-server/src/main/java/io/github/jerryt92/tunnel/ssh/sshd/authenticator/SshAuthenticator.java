@@ -19,13 +19,6 @@ public class SshAuthenticator implements PasswordAuthenticator {
 
     @Override
     public boolean authenticate(String username, String password, ServerSession serverSession) throws PasswordChangeRequiredException, AsyncAuthException {
-
-        if (sshdConfig.allowPassword) {
-            return sshdConfig.username.equals(username) && sshdConfig.password.equals(password);
-        } else {
-            return false;
-        }
+        return sshdConfig.username.equals(username) && sshdConfig.password.equals(password);
     }
-
-
 }
