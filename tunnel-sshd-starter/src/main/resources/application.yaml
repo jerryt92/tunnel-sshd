@@ -1,0 +1,20 @@
+server:
+  port: 62212
+spring:
+  application:
+    name: tunnel
+tunnel:
+  sshd:
+    bind-address: 0.0.0.0
+    port: 22222
+    # 是否允许转发代理
+    allow-forward-agent: false
+    # 是否允许转发X11
+    allow-forward-x11: false
+    # 是否允许客户端远程转发
+    allow-client-remote-forward: true
+    # 是否允许客户端本地转发和动态转发（建议关闭！因为这会允许客户端访问服务器本地侧的任何端口！）
+    allow-client-local-forward: false
+    allow-password: true
+    username: root
+    password: 123456

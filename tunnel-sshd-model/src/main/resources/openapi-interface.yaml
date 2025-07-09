@@ -1,0 +1,60 @@
+openapi: 3.0.3
+info:
+  title: tunnel operate - OpenAPI 3.0
+  description: |-
+    This is tunnel operate OpenAPI.
+  version: 1.0.0
+tags:
+  - name: HealthCheck
+  - name: NeProxy
+paths:
+  # HealthCheck API
+  /v1/api/tunnel-sshd/health-check:
+    get:
+      tags:
+        - HealthCheck
+      summary: do health check.
+      description: do health check.
+      operationId: checkHealth
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '405':
+          description: Method Not Allowed
+        '500':
+          description: Internal Server Error
+  /v1/rest/tunnel-sshd/ne/web-proxy:
+    post:
+      tags:
+        - NeProxy
+      summary: 创建网元Web代理（EWeb）
+      description: 创建网元Web代理（EWeb）
+      operationId: createNeWebProxy
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: './openapi-model.yaml#/components/schemas/NeWebProxyCreateDto'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './openapi-model.yaml#/components/schemas/NeWebProxyCreateResponseDto'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '405':
+          description: Method Not Allowed
+        '500':
+          description: Internal Server Error
