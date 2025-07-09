@@ -17,6 +17,7 @@ import org.apache.sshd.common.signature.Signature;
 import org.apache.sshd.common.util.net.SshdSocketAddress;
 import org.apache.sshd.server.SshServer;
 import org.apache.sshd.server.auth.password.PasswordAuthenticator;
+import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
 import org.apache.sshd.server.forward.ForwardingFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +43,8 @@ public class SshdServer {
     private SshdConfig sshdConfig;
     @Autowired
     private PasswordAuthenticator passwordAuthenticator;
+    @Autowired
+    private PublickeyAuthenticator publickeyAuthenticator;
     @Autowired
     private SessionListener sessionListener;
     @Autowired
@@ -82,6 +85,8 @@ public class SshdServer {
                 sshdInstance.setSignatureFactories(signatureFactories);
                 // 设置密码验证
                 sshdInstance.setPasswordAuthenticator(passwordAuthenticator);
+                // 设置公钥验证
+                sshdInstance.setPublickeyAuthenticator(publickeyAuthenticator);
                 // 设置shell
 //                sshdInstance.setShellFactory(new ProcessShellFactory("/bin/sh", "-i"));
                 // 设置端口转发
