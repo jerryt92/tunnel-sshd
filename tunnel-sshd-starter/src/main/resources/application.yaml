@@ -15,7 +15,9 @@ tunnel:
     allow-client-remote-forward: true
     # 是否允许客户端本地转发和动态转发（建议关闭！因为这会允许客户端访问服务器本地侧的任何端口！）
     allow-client-local-forward: false
+    # 是否允许密码认证
     allow-password: true
+    # 是否允许公钥认证(classpath:/authorized_keys)
     allow-public-key: true
     username: root
     password: 123456
