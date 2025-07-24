@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.net.InetSocketAddress;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
+import lombok.Getter;
 import org.apache.sshd.common.session.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class SshSessionService {
     private static final Logger log = LoggerFactory.getLogger(SshSessionService.class);
+    @Getter
     private ConcurrentLinkedQueue<Session> sshSessions = new ConcurrentLinkedQueue();
     private ConcurrentHashMap<Session, InetSocketAddress> sessionForwardingAddress = new ConcurrentHashMap();
 

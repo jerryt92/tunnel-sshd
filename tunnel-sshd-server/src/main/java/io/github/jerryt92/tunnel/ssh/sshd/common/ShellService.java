@@ -18,9 +18,9 @@ public class ShellService {
     }
 
     public void start() {
-        ShellService var10002 = instance;
-        Objects.requireNonNull(var10002);
-        (new Thread(var10002::startCommandLineInterface)).start();
+        ShellService shellService = instance;
+        Objects.requireNonNull(shellService);
+        instance.startCommandLineInterface();
     }
 
     private void startCommandLineInterface() {
