@@ -27,6 +27,7 @@ public class ThreadPoolConfig {
         executor.setMaxPoolSize(10);
         executor.setQueueCapacity(25);
         executor.setThreadNamePrefix("sshdExecutor");
+        executor.setDaemon(true);
         executor.initialize();
         return executor;
     }

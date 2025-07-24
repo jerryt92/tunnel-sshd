@@ -1,20 +1,19 @@
 package io.github.jerryt92.tunnel.ssh.sshd.sshd;
 
 import io.github.jerryt92.tunnel.ssh.sshd.common.ShellService;
+import io.github.jerryt92.tunnel.ssh.sshd.common.ShellServiceShellFactory;
 import io.github.jerryt92.tunnel.ssh.sshd.config.SshdConfig;
 import io.github.jerryt92.tunnel.ssh.sshd.crypto.Ed25519KeyPair;
 import io.github.jerryt92.tunnel.ssh.sshd.crypto.RSAKeyPair;
 import io.github.jerryt92.tunnel.ssh.sshd.event.MyIoServiceEventListener;
 import io.github.jerryt92.tunnel.ssh.sshd.util.Ed25519Util;
 import io.github.jerryt92.tunnel.ssh.sshd.util.RSAUtil;
-import org.apache.sshd.common.NamedFactory;
 import org.apache.sshd.common.forward.PortForwardingEventListener;
 import org.apache.sshd.common.keyprovider.KeyPairProvider;
 import org.apache.sshd.common.session.Session;
 import org.apache.sshd.common.session.SessionListener;
-import org.apache.sshd.common.signature.BuiltinSignatures;
-import org.apache.sshd.common.signature.Signature;
 import org.apache.sshd.common.util.net.SshdSocketAddress;
+import org.apache.sshd.server.ServerBuilder;
 import org.apache.sshd.server.SshServer;
 import org.apache.sshd.server.auth.password.PasswordAuthenticator;
 import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
@@ -31,7 +30,6 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.List;
 import java.util.concurrent.Executor;
 
 @Component
@@ -74,15 +72,7 @@ public class SshdServer {
                 sshdInstance.setKeyPairProvider(keyPairProvider);
                 // 设置签名工厂
                 // 设置支持的签名算法
-                List<NamedFactory<Signature>> signatureFactories = new ArrayList<>();
-                signatureFactories.add(BuiltinSignatures.rsa);
-                signatureFactories.add(BuiltinSignatures.rsaSHA256);
-                signatureFactories.add(BuiltinSignatures.rsaSHA256_cert);
-                signatureFactories.add(BuiltinSignatures.rsaSHA512);
-                signatureFactories.add(BuiltinSignatures.rsaSHA512_cert);
-                signatureFactories.add(BuiltinSignatures.ed25519);
-                signatureFactories.add(BuiltinSignatures.ed25519_cert);
-                sshdInstance.setSignatureFactories(signatureFactories);
+                sshdInstance.setSignatureFactories(new ArrayList<>(ServerBuilder.DEFAULT_SIGNATURE_PREFERENCE));
                 if (sshdConfig.allowPassword) {
                     // 设置密码验证
                     sshdInstance.setPasswordAuthenticator(passwordAuthenticator);
@@ -92,7 +82,7 @@ public class SshdServer {
                     sshdInstance.setPublickeyAuthenticator(publickeyAuthenticator);
                 }
                 // 设置shell
-//                sshdInstance.setShellFactory(new ProcessShellFactory("/bin/sh", "-i"));
+                setShell();
                 // 设置端口转发
                 sshdInstance.setForwardingFilter(new ForwardingFilter() {
                     @Override
@@ -131,5 +121,9 @@ public class SshdServer {
                 log.error("Failed to start SSHD server", e);
             }
         });
+    }
+
+    public static void setShell() {
+        sshdInstance.setShellFactory(new ShellServiceShellFactory());
     }
 }
