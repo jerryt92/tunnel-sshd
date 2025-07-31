@@ -53,12 +53,14 @@ public class SshSessionService {
     }
 
     public void showSshSessions() {
-        System.out.println("   索引   |   客户端地址   |   服务端地址   |   端口转发功能绑定的服务端地址   ");
+        System.out.println("   索引   |   客户端地址   |   服务端地址   |   端口转发功能绑定的服务端地址   |   用户   ");
         System.out.println();
         int index = 0;
 
         for(Session session : this.sshSessions) {
-            System.out.println("   " + index + "   |   " + session.getRemoteAddress().toString().replace("/", "") + "   |   " + session.getLocalAddress().toString().replace("/", "") + "   |   " + (this.sessionForwardingAddress.get(session) == null ? "-" : (Serializable)this.sessionForwardingAddress.get(session)).toString().replace("/", ""));
+            System.out.println("   " + index + "   |   " + session.getRemoteAddress().toString().replace("/", "") + "   |   " + session.getLocalAddress().toString().replace("/", "") + "   |   " + (this.sessionForwardingAddress.get(session) == null ? "-" : (Serializable)this.sessionForwardingAddress.get(session)).toString().replace("/", "")
+                    + "   |   " + session.getUsername()
+            );
             ++index;
         }
 
