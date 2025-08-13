@@ -1,3 +1,3 @@
-# SSH隧道服务
+For managing the tunnels used for SSH TCP forwarding.
 
-用于建立与维护SSH代理的隧道
+用于管理TCP转发的SSH隧道。
