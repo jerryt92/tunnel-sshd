@@ -21,7 +21,6 @@ import org.apache.sshd.server.forward.ForwardingFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -30,13 +29,10 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.concurrent.Executor;
 
 @Component
 public class SshdServer {
     private static final Logger log = LoggerFactory.getLogger(SshdServer.class);
-    @Autowired
-    private ShellService shellService;
     @Autowired
     private SshdConfig sshdConfig;
     @Autowired
@@ -51,76 +47,73 @@ public class SshdServer {
     private MyIoServiceEventListener myIoServiceEventListener;
     private static SshServer sshdInstance;
     @Autowired
-    @Qualifier("sshdExecutor")
-    private Executor sshdExecutor;
+    private ShellService shellService;
 
     @PostConstruct
     public void initSshd() {
-        sshdExecutor.execute(() -> {
-            try {
-                PublicKey ed25519PublicKey = Ed25519Util.getPublicKeyFromBytes(Base64.getDecoder().decode(Ed25519KeyPair.PUBLIC_KEY));
-                PrivateKey ed25519PrivateKey = Ed25519Util.getPrivateKeyFromBytes(Base64.getDecoder().decode(Ed25519KeyPair.PRIVATE_KEY));
-                PublicKey rsaPublicKey = RSAUtil.getPublicKeyFromBytes(Base64.getDecoder().decode(RSAKeyPair.PUBLIC_KEY));
-                PrivateKey rsaPrivateKey = RSAUtil.getPrivateKeyFromBytes(Base64.getDecoder().decode(RSAKeyPair.PRIVATE_KEY));
-                KeyPairProvider keyPairProvider = KeyPairProvider.wrap(
-                        new KeyPair(rsaPublicKey, rsaPrivateKey),
-                        new KeyPair(ed25519PublicKey, ed25519PrivateKey)
-                );
-                sshdInstance = SshServer.setUpDefaultServer();
-                sshdInstance.setHost(sshdConfig.bindAddress);
-                sshdInstance.setPort(sshdConfig.sshdPort);
-                sshdInstance.setKeyPairProvider(keyPairProvider);
-                // 设置签名工厂
-                // 设置支持的签名算法
-                sshdInstance.setSignatureFactories(new ArrayList<>(ServerBuilder.DEFAULT_SIGNATURE_PREFERENCE));
-                if (sshdConfig.allowPassword) {
-                    // 设置密码验证
-                    sshdInstance.setPasswordAuthenticator(passwordAuthenticator);
-                }
-                if (sshdConfig.allowPublicKey) {
-                    // 设置公钥验证
-                    sshdInstance.setPublickeyAuthenticator(publickeyAuthenticator);
-                }
-                // 设置shell
-                setShell();
-                // 设置端口转发
-                sshdInstance.setForwardingFilter(new ForwardingFilter() {
-                    @Override
-                    public boolean canForwardAgent(Session session, String s) {
-                        // 转发Agent（SSH Agent是一个用于管理密钥的程序）
-                        return sshdConfig.allowForwardAgent;
-                    }
-
-                    @Override
-                    public boolean canForwardX11(Session session, String s) {
-                        // 转发X11（X11是一个用于图形化显示的协议）
-                        return sshdConfig.allowForwardX11;
-                    }
-
-                    @Override
-                    public boolean canListen(SshdSocketAddress address, Session session) {
-                        // 客户端远程转发（-R）
-                        return sshdConfig.allowClientRemoteForward;
-                    }
-
-                    @Override
-                    public boolean canConnect(Type type, SshdSocketAddress address, Session session) {
-                        // 客户端本地转发（-L）（建议关闭，因为这会允许客户端连接到服务器的任何端口）
-                        return sshdConfig.allowClientLocalForward;
-                    }
-                });
-                // 添加会话事件监听器
-                sshdInstance.addSessionListener(sessionListener);
-                // 添加端口转发事件监听器
-                sshdInstance.addPortForwardingEventListener(nePortForwardingEventListener);
-                sshdInstance.setIoServiceEventListener(myIoServiceEventListener);
-                sshdInstance.start();
-                this.shellService.start();
-                System.out.println("SSHD started on port : " + this.sshdConfig.sshdPort);
-            } catch (Throwable e) {
-                log.error("Failed to start SSHD server", e);
+        try {
+            PublicKey ed25519PublicKey = Ed25519Util.getPublicKeyFromBytes(Base64.getDecoder().decode(Ed25519KeyPair.PUBLIC_KEY));
+            PrivateKey ed25519PrivateKey = Ed25519Util.getPrivateKeyFromBytes(Base64.getDecoder().decode(Ed25519KeyPair.PRIVATE_KEY));
+            PublicKey rsaPublicKey = RSAUtil.getPublicKeyFromBytes(Base64.getDecoder().decode(RSAKeyPair.PUBLIC_KEY));
+            PrivateKey rsaPrivateKey = RSAUtil.getPrivateKeyFromBytes(Base64.getDecoder().decode(RSAKeyPair.PRIVATE_KEY));
+            KeyPairProvider keyPairProvider = KeyPairProvider.wrap(
+                    new KeyPair(rsaPublicKey, rsaPrivateKey),
+                    new KeyPair(ed25519PublicKey, ed25519PrivateKey)
+            );
+            sshdInstance = SshServer.setUpDefaultServer();
+            sshdInstance.setHost(sshdConfig.bindAddress);
+            sshdInstance.setPort(sshdConfig.sshdPort);
+            sshdInstance.setKeyPairProvider(keyPairProvider);
+            // 设置签名工厂
+            // 设置支持的签名算法
+            sshdInstance.setSignatureFactories(new ArrayList<>(ServerBuilder.DEFAULT_SIGNATURE_PREFERENCE));
+            if (sshdConfig.allowPassword) {
+                // 设置密码验证
+                sshdInstance.setPasswordAuthenticator(passwordAuthenticator);
             }
-        });
+            if (sshdConfig.allowPublicKey) {
+                // 设置公钥验证
+                sshdInstance.setPublickeyAuthenticator(publickeyAuthenticator);
+            }
+            // 设置shell
+            setShell();
+            // 设置端口转发
+            sshdInstance.setForwardingFilter(new ForwardingFilter() {
+                @Override
+                public boolean canForwardAgent(Session session, String s) {
+                    // 转发Agent（SSH Agent是一个用于管理密钥的程序）
+                    return sshdConfig.allowForwardAgent;
+                }
+
+                @Override
+                public boolean canForwardX11(Session session, String s) {
+                    // 转发X11（X11是一个用于图形化显示的协议）
+                    return sshdConfig.allowForwardX11;
+                }
+
+                @Override
+                public boolean canListen(SshdSocketAddress address, Session session) {
+                    // 客户端远程转发（-R）
+                    return sshdConfig.allowClientRemoteForward;
+                }
+
+                @Override
+                public boolean canConnect(Type type, SshdSocketAddress address, Session session) {
+                    // 客户端本地转发（-L）（建议关闭，因为这会允许客户端连接到服务器的任何端口）
+                    return sshdConfig.allowClientLocalForward;
+                }
+            });
+            // 添加会话事件监听器
+            sshdInstance.addSessionListener(sessionListener);
+            // 添加端口转发事件监听器
+            sshdInstance.addPortForwardingEventListener(nePortForwardingEventListener);
+            sshdInstance.setIoServiceEventListener(myIoServiceEventListener);
+            sshdInstance.start();
+            System.out.println("SSHD started on port : " + this.sshdConfig.sshdPort);
+            shellService.start();
+        } catch (Throwable e) {
+            log.error("Failed to start SSHD server", e);
+        }
     }
 
     public static void setShell() {

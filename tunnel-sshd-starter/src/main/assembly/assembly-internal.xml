@@ -51,10 +51,4 @@
 			</includes>
 		</fileSet>
 	</fileSets>
-	<files>
-		<file>
-			<source>${project.parent.basedir}/tunnel-sshd-server/target/tunnel-sshd-server-${project.version}.jar</source>
-			<outputDirectory>tunnel-sshd/bundled-jar</outputDirectory>
-		</file>
-	</files>
 </assembly>

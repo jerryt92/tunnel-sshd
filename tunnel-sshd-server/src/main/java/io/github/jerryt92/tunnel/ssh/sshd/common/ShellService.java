@@ -1,11 +1,11 @@
 package io.github.jerryt92.tunnel.ssh.sshd.common;
 
-import java.util.Objects;
-import java.util.Scanner;
-
 import io.github.jerryt92.tunnel.ssh.sshd.service.SshSessionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Objects;
+import java.util.Scanner;
 
 @Component
 public class ShellService {
@@ -20,14 +20,13 @@ public class ShellService {
     public void start() {
         ShellService shellService = instance;
         Objects.requireNonNull(shellService);
-        instance.startCommandLineInterface();
+        Thread.startVirtualThread(this::startCommandLineInterface);
     }
 
     private void startCommandLineInterface() {
         System.out.println();
         printHelp();
         Scanner scanner = new Scanner(System.in);
-
         while (true) {
             System.out.print("Enter command: ");
             String command = scanner.nextLine().trim();
@@ -38,12 +37,6 @@ public class ShellService {
             } else if (command.equals("help")) {
                 printHelp();
             } else {
-                if (command.equals("exit")) {
-                    System.out.println("Exiting...");
-                    System.exit(0);
-                    return;
-                }
-
                 if (command.startsWith("close")) {
                     String[] parts = command.split(" ");
                     if (parts.length != 2) {
@@ -68,7 +61,6 @@ public class ShellService {
     private static void printHelp() {
         System.out.println("可用命令：");
         System.out.println("  help         - 显示帮助信息");
-        System.out.println("  exit         - 关闭程序");
         System.out.println("  show         - 显示所有SSH会话");
         System.out.println("  close <索引>  - 关闭指定索引的SSH会话");
     }
