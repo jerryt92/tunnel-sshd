@@ -13,6 +13,7 @@ import org.apache.sshd.common.keyprovider.KeyPairProvider;
 import org.apache.sshd.common.session.Session;
 import org.apache.sshd.common.session.SessionListener;
 import org.apache.sshd.common.util.net.SshdSocketAddress;
+import org.apache.sshd.core.CoreModuleProperties;
 import org.apache.sshd.server.ServerBuilder;
 import org.apache.sshd.server.SshServer;
 import org.apache.sshd.server.auth.password.PasswordAuthenticator;
@@ -108,6 +109,7 @@ public class SshdServer {
             // 添加端口转发事件监听器
             sshdInstance.addPortForwardingEventListener(nePortForwardingEventListener);
             sshdInstance.setIoServiceEventListener(myIoServiceEventListener);
+            sshdInstance.getProperties().put(CoreModuleProperties.FORWARDER_BUFFER_SIZE.getName(), 1024 * 1024 * 1024);
             sshdInstance.start();
             System.out.println("SSHD started on port : " + this.sshdConfig.sshdPort);
             shellService.start();
