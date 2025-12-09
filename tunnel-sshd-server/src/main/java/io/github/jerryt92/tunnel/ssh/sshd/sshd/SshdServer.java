@@ -109,7 +109,8 @@ public class SshdServer {
             // 添加端口转发事件监听器
             sshdInstance.addPortForwardingEventListener(nePortForwardingEventListener);
             sshdInstance.setIoServiceEventListener(myIoServiceEventListener);
-            sshdInstance.getProperties().put(CoreModuleProperties.FORWARDER_BUFFER_SIZE.getName(), 1024 * 1024 * 1024);
+            sshdInstance.getProperties().put(CoreModuleProperties.BUFFER_SIZE.getName(), 10 * 1024 * 1024 * 1024L);
+            sshdInstance.getProperties().put(CoreModuleProperties.FORWARDER_BUFFER_SIZE.getName(), 10 * 1024 * 1024 * 1024L);
             sshdInstance.start();
             System.out.println("SSHD started on port : " + this.sshdConfig.sshdPort);
             shellService.start();
