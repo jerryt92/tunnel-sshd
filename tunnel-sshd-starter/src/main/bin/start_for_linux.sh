@@ -57,7 +57,7 @@ function startProcess() {
     nohup java -cp "${SVC_CP}" $JAVA_OPTS ${MAIN_CLASS} ${other_args}> /dev/null 2>&1 &
   else
     echo "java_home HAS BEEN SET TO: "$java_home
-    nohup ${java_home}/bin/java -cp "${SVC_CP}" $JAVA_OPTS ${MAIN_CLASS} ${other_args} > /dev/null 2>&1 &
+    nohup ${java_home}/bin/java -cp "${SVC_CP}" JAVA_OPTS ${MAIN_CLASS} ${other_args} > /dev/null 2>&1 &
   fi
 
   if [ 0 -eq $? ]
@@ -81,7 +81,7 @@ parseInput $@
 initEnvironment
 
 JAVA_OPTS="-Duser.language=${USER_LANGUAGE} -Duser.country=${USER_COUNTRY}"
-JAVA_OPTS="${JAVA_OPTS} -Xms256m -Xmx256m"
+JAVA_OPTS="${JAVA_OPTS} -Xms512m -Xmx2g"
 JAVA_OPTS="${JAVA_OPTS} -XX:MetaspaceSize=80m -XX:MaxMetaspaceSize=128m"
 JAVA_OPTS="${JAVA_OPTS} -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=utf-8"
 

@@ -1,0 +1,1 @@
+java.exe -cp %~dp0\..\classes;%~dp0\..\lib\* -Xms512m -Xmx2g io.github.jerryt92.tunnel.ssh.sshd.TunnelStarterMain
