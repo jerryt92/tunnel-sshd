@@ -113,8 +113,12 @@ public class SshdServer {
             sshdInstance.addPortForwardingEventListener(portForwardingEventListener);
             sshdInstance.addChannelListener(dynamicForwardingListener);
             sshdInstance.setIoServiceEventListener(myIoServiceEventListener);
-            sshdInstance.getProperties().put(CoreModuleProperties.BUFFER_SIZE.getName(), 1024 * 1024 * 1024L);
-            sshdInstance.getProperties().put(CoreModuleProperties.FORWARDER_BUFFER_SIZE.getName(), 1024 * 1024 * 1024L);
+            // 窗口大小配置 1MB
+            sshdInstance.getProperties().put(CoreModuleProperties.WINDOW_SIZE.getName(), 1024 * 1024);
+            // 单个数据包最大大小 64KB
+            sshdInstance.getProperties().put(CoreModuleProperties.MAX_PACKET_SIZE.getName(), 2 * CoreModuleProperties.DEFAULT_MAX_PACKET_SIZE);
+            // 包大小上限 1GB
+            sshdInstance.getProperties().put(CoreModuleProperties.LIMIT_PACKET_SIZE.getName(), 2 * CoreModuleProperties.DEFAULT_LIMIT_PACKET_SIZE);
             sshdInstance.start();
             System.out.println("SSHD started on port : " + this.sshdConfig.sshdPort);
             shellService.start();
