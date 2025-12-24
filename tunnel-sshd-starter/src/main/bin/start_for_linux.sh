@@ -81,7 +81,7 @@ parseInput $@
 initEnvironment
 
 JAVA_OPTS="-Duser.language=${USER_LANGUAGE} -Duser.country=${USER_COUNTRY}"
-JAVA_OPTS="${JAVA_OPTS} -Xms512m -Xmx2g"
+JAVA_OPTS="${JAVA_OPTS} -Xms512m -Xmx4g"
 JAVA_OPTS="${JAVA_OPTS} -XX:MetaspaceSize=80m -XX:MaxMetaspaceSize=128m"
 JAVA_OPTS="${JAVA_OPTS} -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=utf-8"
 
