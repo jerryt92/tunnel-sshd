@@ -5,6 +5,7 @@ import io.github.jerryt92.tunnel.ssh.sshd.common.ShellServiceShellFactory;
 import io.github.jerryt92.tunnel.ssh.sshd.config.SshdConfig;
 import io.github.jerryt92.tunnel.ssh.sshd.crypto.Ed25519KeyPair;
 import io.github.jerryt92.tunnel.ssh.sshd.crypto.RSAKeyPair;
+import io.github.jerryt92.tunnel.ssh.sshd.event.DynamicForwardingListener;
 import io.github.jerryt92.tunnel.ssh.sshd.event.MyIoServiceEventListener;
 import io.github.jerryt92.tunnel.ssh.sshd.util.Ed25519Util;
 import io.github.jerryt92.tunnel.ssh.sshd.util.RSAUtil;
@@ -43,7 +44,9 @@ public class SshdServer {
     @Autowired
     private SessionListener sessionListener;
     @Autowired
-    private PortForwardingEventListener nePortForwardingEventListener;
+    private PortForwardingEventListener portForwardingEventListener;
+    @Autowired
+    private DynamicForwardingListener dynamicForwardingListener;
     @Autowired
     private MyIoServiceEventListener myIoServiceEventListener;
     private static SshServer sshdInstance;
@@ -107,10 +110,11 @@ public class SshdServer {
             // 添加会话事件监听器
             sshdInstance.addSessionListener(sessionListener);
             // 添加端口转发事件监听器
-            sshdInstance.addPortForwardingEventListener(nePortForwardingEventListener);
+            sshdInstance.addPortForwardingEventListener(portForwardingEventListener);
+            sshdInstance.addChannelListener(dynamicForwardingListener);
             sshdInstance.setIoServiceEventListener(myIoServiceEventListener);
-            sshdInstance.getProperties().put(CoreModuleProperties.BUFFER_SIZE.getName(), 10 * 1024 * 1024 * 1024L);
-            sshdInstance.getProperties().put(CoreModuleProperties.FORWARDER_BUFFER_SIZE.getName(), 10 * 1024 * 1024 * 1024L);
+            sshdInstance.getProperties().put(CoreModuleProperties.BUFFER_SIZE.getName(), 1024 * 1024 * 1024L);
+            sshdInstance.getProperties().put(CoreModuleProperties.FORWARDER_BUFFER_SIZE.getName(), 1024 * 1024 * 1024L);
             sshdInstance.start();
             System.out.println("SSHD started on port : " + this.sshdConfig.sshdPort);
             shellService.start();
