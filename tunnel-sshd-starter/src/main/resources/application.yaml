@@ -1,8 +1,6 @@
-server:
-  port: 62212
 spring:
   application:
-    name: tunnel
+    name: tunnel-sshd
 tunnel:
   sshd:
     bind-address: 0.0.0.0

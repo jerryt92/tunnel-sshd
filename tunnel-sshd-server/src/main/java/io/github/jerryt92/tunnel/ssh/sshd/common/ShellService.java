@@ -20,7 +20,7 @@ public class ShellService {
     public void start() {
         ShellService shellService = instance;
         Objects.requireNonNull(shellService);
-        Thread.startVirtualThread(this::startCommandLineInterface);
+        startCommandLineInterface();
     }
 
     private void startCommandLineInterface() {
