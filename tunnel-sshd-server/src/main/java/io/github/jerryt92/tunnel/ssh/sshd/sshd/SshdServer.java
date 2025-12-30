@@ -113,8 +113,10 @@ public class SshdServer {
             sshdInstance.addPortForwardingEventListener(portForwardingEventListener);
             sshdInstance.addChannelListener(dynamicForwardingListener);
             sshdInstance.setIoServiceEventListener(myIoServiceEventListener);
-            // 禁止基于流量的重协商
-            sshdInstance.getProperties().put(CoreModuleProperties.REKEY_BYTES_LIMIT.getName(), -1L);
+            if (sshdConfig.disableRekeyBytesLimit) {
+                // 禁用基于流量的重协商
+                sshdInstance.getProperties().put(CoreModuleProperties.REKEY_BYTES_LIMIT.getName(), -1L);
+            }
             // 窗口大小配置 1MB
             sshdInstance.getProperties().put(CoreModuleProperties.WINDOW_SIZE.getName(), 1024 * 1024);
             // 单个数据包最大大小 64KB

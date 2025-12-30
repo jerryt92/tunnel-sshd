@@ -9,6 +9,8 @@ public class SshdConfig {
     public String bindAddress;
     @Value("${tunnel.sshd.port}")
     public int sshdPort;
+    @Value("${tunnel.sshd.disable-rekey-bytes-limit}")
+    public boolean disableRekeyBytesLimit;
     @Value("${tunnel.sshd.allow-forward-agent}")
     public boolean allowForwardAgent;
     @Value("${tunnel.sshd.allow-forward-x11}")

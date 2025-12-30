@@ -5,6 +5,8 @@ tunnel:
   sshd:
     bind-address: 0.0.0.0
     port: 22222
+    # 是否禁用基于流量的重协商（RFC 4253）（如果在传输中数据量过大时卡顿，可禁用，但是会增加密钥破解风险）
+    disable-rekey-bytes-limit: false
     # 是否允许转发代理
     allow-forward-agent: false
     # 是否允许转发X11
