@@ -9,10 +9,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 class BaseCommand implements Command {
+    private static final List<String> COMMANDS = Arrays.asList("help", "exit");
     private OutputStream outputStream;
     private InputStream inputStream;
     private OutputStream errorStream;
@@ -83,7 +86,11 @@ class BaseCommand implements Command {
                             outputStream.flush();
                         }
                     }
-                    // --- 3. 处理普通字符 ---
+                    // --- 3. 处理 Tab 联想 ---
+                    else if (c == 9) {
+                        handleTabCompletion(cmdBuffer);
+                    }
+                    // --- 4. 处理普通字符 ---
                     else {
                         // 累加到命令缓冲区
                         cmdBuffer.append((char) c);
@@ -108,7 +115,7 @@ class BaseCommand implements Command {
      * @return true 表示需要退出连接
      */
     private boolean processCommand(String cmd) throws IOException {
-        if ("exit".equalsIgnoreCase(cmd) || "quit".equalsIgnoreCase(cmd)) {
+        if ("exit".equalsIgnoreCase(cmd)) {
             write("Bye!\r\n");
             return true;
         } else if ("help".equalsIgnoreCase(cmd)) {
@@ -134,5 +141,42 @@ class BaseCommand implements Command {
         write("Available commands:\r\n");
         write("  help  - Show this help message\r\n");
         write("  exit  - Close the connection\r\n");
+    }
+
+    /**
+     * Tab 联想：根据当前输入补全命令
+     */
+    private void handleTabCompletion(StringBuilder cmdBuffer) throws IOException {
+        String input = cmdBuffer.toString().trim().toLowerCase();
+        List<String> matches = COMMANDS.stream()
+                .filter(cmd -> cmd.toLowerCase().startsWith(input))
+                .toList();
+
+        if (matches.isEmpty()) {
+            return;
+        }
+        if (matches.size() == 1) {
+            // 唯一匹配：补全命令并加空格
+            String completion = matches.get(0);
+            int len = cmdBuffer.length();
+            for (int i = 0; i < len; i++) {
+                outputStream.write('\b');
+                outputStream.write(' ');
+                outputStream.write('\b');
+            }
+            outputStream.flush();
+            cmdBuffer.setLength(0);
+            cmdBuffer.append(completion).append(' ');
+            write(completion + " ");
+        } else {
+            // 多个匹配：列出所有候选
+            write("\r\n");
+            for (String m : matches) {
+                write("  " + m);
+            }
+            write("\r\n> ");
+            write(cmdBuffer.toString());
+            outputStream.flush();
+        }
     }
 }
