@@ -24,6 +24,7 @@
 			<outputDirectory>tunnel-sshd/bin</outputDirectory>
 			<includes>
 				<include>*.sh</include>
+                <include>*.bat</include>
 			</includes>
 			<fileMode>0744</fileMode>
             <lineEnding>unix</lineEnding>

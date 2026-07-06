@@ -1,1 +1,1 @@
-java.exe -cp %~dp0\..\classes;%~dp0\..\lib\* -Xms512m -Xmx4g io.github.jerryt92.tunnel.ssh.sshd.TunnelStarterMain
+%~dp0\..\dragonwell-21\bin\java.exe -cp %~dp0\..\classes;%~dp0\..\lib\* -Xms512m -Xmx4g io.github.jerryt92.tunnel.ssh.sshd.TunnelStarterMain
