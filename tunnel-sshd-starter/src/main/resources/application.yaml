@@ -19,5 +19,6 @@ tunnel:
     allow-password: true
     # 是否允许公钥认证(classpath:/authorized_keys)
     allow-public-key: true
+    allow-sftp: true
     username: root
     password: 123456

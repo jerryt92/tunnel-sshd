@@ -23,6 +23,8 @@ public class SshdConfig {
     public boolean allowPassword;
     @Value("${tunnel.sshd.allow-public-key}")
     public boolean allowPublicKey;
+    @Value("${tunnel.sshd.allow-sftp}")
+    public boolean allowSftp;
     @Value("${tunnel.sshd.username}")
     public String username;
     @Value("${tunnel.sshd.password}")

@@ -20,17 +20,21 @@ import org.apache.sshd.server.SshServer;
 import org.apache.sshd.server.auth.password.PasswordAuthenticator;
 import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
 import org.apache.sshd.server.forward.ForwardingFilter;
+import org.apache.sshd.sftp.SftpModuleProperties;
+import org.apache.sshd.sftp.server.SftpSubsystemFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 
 @Component
 public class SshdServer {
@@ -81,6 +85,11 @@ public class SshdServer {
             }
             // 设置shell
             setShell();
+            if (sshdConfig.allowSftp) {
+                // 设置SFTP子系统，并使用UTF-8解析文件名
+                SftpModuleProperties.NAME_DECODING_CHARSET.set(sshdInstance, StandardCharsets.UTF_8);
+                sshdInstance.setSubsystemFactories(List.of(new SftpSubsystemFactory.Builder().build()));
+            }
             // 设置端口转发
             sshdInstance.setForwardingFilter(new ForwardingFilter() {
                 @Override
